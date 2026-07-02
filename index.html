@@ -1,319 +1,661 @@
 <!DOCTYPE html>
-<!--
-  ============================================================================
-   영재 탐구 산출물 아카이브 — [방법 A] 손으로 카드를 적는 버전 (index.html)
-  ============================================================================
-
-  [이 파일이 하는 일]
-  이 index.html을 GitHub 저장소에 올리고 Pages를 켜면, username.github.io 로
-  열리는 공개 아카이브 사이트가 됩니다.
-
-  [강사님이 편집할 곳은 딱 3군데]
-   1) (A) 사이트 머리말  — 아카이브 이름, 한 줄 철학, 운영자 닉네임
-   2) (B) 카드 목록      — 카드 안의 글자만 바꾸면 됩니다
-   3) 카드를 더 넣을 때   — (C) "복사용 빈 카드"를 통째로 복사해 붙여넣기
-
-  [현재 들어있는 카드 — 과학 산출물 3종]
-   · 자유낙하 (freefall.html)  · 포화수증기량 (saturation.html)  · 혈당 항상성 (glucose.html)
-   ※ 각 카드의 산출물 .html 파일을 같은 저장소에 함께 올려야 '산출물 열기'가 작동합니다.
-
-  [개인정보] 학생 실명·학교명·반 금지. 닉네임만. Public 저장소는 검색에 노출됩니다.
-  ============================================================================
--->
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>탐구 아카이브</title>
-
-  <!-- 글꼴: 인터넷이 연결되면 자동으로 불러옵니다. 손댈 필요 없습니다. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-  <style>
-    /* === 색·여백을 한곳에서 관리 (바꾸고 싶으면 여기 값만 수정) === */
-    :root{
-      --paper:#F4F1EA;        /* 종이 바탕색 */
-      --paper-2:#FBF9F4;      /* 카드 표면색 */
-      --ink:#22201B;          /* 본문 먹색 */
-      --ink-soft:#5C564C;     /* 보조 글자 */
-      --line:#D8D2C4;         /* 가는 선 */
-      --accent:#1F6F66;       /* 강조색(짙은 청록) */
-      --accent-warm:#B4532B;  /* 보조 강조(테라코타) */
-      --maxw:1080px;
-    }
-
-    *{box-sizing:border-box;margin:0;padding:0;}
-
-    body{
-      background:
-        radial-gradient(circle at 18% 12%, rgba(31,111,102,.05), transparent 40%),
-        radial-gradient(circle at 88% 80%, rgba(180,83,43,.05), transparent 45%),
-        var(--paper);
-      color:var(--ink);
-      font-family:"Pretendard",system-ui,sans-serif;
-      line-height:1.7;
-      -webkit-font-smoothing:antialiased;
-      padding:0 24px 96px;
-    }
-
-    .wrap{max-width:var(--maxw);margin:0 auto;}
-
-    /* ===================== (A) 사이트 머리말 ===================== */
-    header.site{
-      padding:72px 0 40px;
-      border-bottom:1.5px solid var(--ink);
-      animation:rise .7s ease backwards;
-    }
-    .kicker{
-      font-family:"IBM Plex Mono",monospace;
-      font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--accent);margin-bottom:18px;
-    }
-    header.site h1{
-      font-family:"Gowun Batang",serif;font-weight:700;
-      font-size:clamp(2.4rem,6vw,4.1rem);line-height:1.12;
-      letter-spacing:-.01em;max-width:18ch;
-    }
-    header.site .tagline{
-      font-family:"Gowun Batang",serif;font-style:italic;
-      font-size:clamp(1.05rem,2.4vw,1.35rem);color:var(--ink-soft);
-      margin-top:22px;max-width:46ch;
-    }
-    .byline{
-      font-family:"IBM Plex Mono",monospace;font-size:.82rem;
-      color:var(--ink-soft);margin-top:28px;
-      display:flex;gap:18px;flex-wrap:wrap;
-    }
-    .byline b{color:var(--ink);font-weight:500;}
-
-    /* ===================== 안내 띠 ===================== */
-    .note{
-      margin:36px 0 8px;padding:20px 24px;
-      background:var(--paper-2);border:1px solid var(--line);
-      border-left:4px solid var(--accent-warm);border-radius:4px;
-      font-size:.96rem;color:var(--ink-soft);
-      animation:rise .7s ease .1s backwards;
-    }
-
-    /* ===================== 카드 목록 ===================== */
-    .grid{
-      margin-top:40px;
-      display:grid;grid-template-columns:repeat(2,1fr);gap:28px;
-    }
-    @media (max-width:760px){ .grid{grid-template-columns:1fr;} }
-
-    .card{
-      position:relative;background:var(--paper-2);
-      border:1px solid var(--line);border-radius:6px;
-      padding:30px 30px 26px;
-      box-shadow:0 1px 0 rgba(0,0,0,.02);
-      transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-      animation:rise .7s ease backwards;
-    }
-    .card:hover{
-      transform:translateY(-4px);
-      box-shadow:0 14px 30px -18px rgba(34,32,27,.45);
-      border-color:var(--accent);
-    }
-    .card:nth-child(1){animation-delay:.05s}
-    .card:nth-child(2){animation-delay:.12s}
-    .card:nth-child(3){animation-delay:.19s}
-    .card:nth-child(4){animation-delay:.26s}
-
-    .card .no{
-      font-family:"IBM Plex Mono",monospace;font-size:.72rem;
-      letter-spacing:.14em;color:var(--accent);
-    }
-    .card h2{
-      font-family:"Gowun Batang",serif;font-weight:700;
-      font-size:1.42rem;line-height:1.3;margin:6px 0 18px;
-    }
-
-    /* 카드 안의 항목(라벨 + 내용) — '영재 카드'의 핵심 구조 */
-    .field{padding:14px 0;border-top:1px solid var(--line);}
-    .field:first-of-type{border-top:none;padding-top:0;}
-    .field .label{
-      font-family:"IBM Plex Mono",monospace;font-size:.7rem;
-      letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);
-      display:block;margin-bottom:6px;
-    }
-    .field .label.q{color:var(--accent);}
-    .field .label.t{color:var(--accent-warm);}
-    .field p{font-size:.97rem;color:var(--ink);}
-
-    .card .meta{
-      display:flex;justify-content:space-between;align-items:center;
-      gap:14px;margin-top:18px;padding-top:16px;
-      border-top:1px solid var(--line);
-    }
-    .card .updated{
-      font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);
-    }
-    .card a.go{
-      font-family:"IBM Plex Mono",monospace;font-size:.8rem;font-weight:500;
-      color:var(--accent);text-decoration:none;
-      border:1px solid var(--accent);border-radius:999px;
-      padding:7px 15px;white-space:nowrap;
-      transition:background .2s ease,color .2s ease;
-    }
-    .card a.go:hover{background:var(--accent);color:var(--paper-2);}
-
-    /* ===================== 꼬리말 ===================== */
-    footer.site{
-      margin-top:64px;padding-top:28px;border-top:1.5px solid var(--ink);
-      font-family:"IBM Plex Mono",monospace;font-size:.78rem;
-      color:var(--ink-soft);display:flex;justify-content:space-between;
-      gap:18px;flex-wrap:wrap;
-    }
-
-    @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
-    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>성단 HR도 탐구</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --panel:#131a31;
+    --panel2:#1a2342;
+    --text:#f3f7ff;
+    --sub:#b9c7ea;
+    --accent:#7dd3fc;
+    --accent2:#fbbf24;
+    --good:#86efac;
+    --warn:#fca5a5;
+    --ms:#8ec5ff;
+    --rg:#ffb36b;
+    --hb:#d8a8ff;
+    --grid:rgba(255,255,255,0.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial, "맑은 고딕", sans-serif;
+    background:linear-gradient(180deg,#08101f,#101935 45%,#0b1020);
+    color:var(--text);
+  }
+  .wrap{
+    max-width:1400px;
+    margin:0 auto;
+    padding:1rem;
+  }
+  h1{
+    margin:0 0 .5rem 0;
+    font-size:clamp(1.7rem,3vw,2.8rem);
+    line-height:1.2;
+  }
+  .subtitle{
+    color:var(--sub);
+    font-size:clamp(1rem,1.8vw,1.25rem);
+    margin-bottom:1rem;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:1rem;
+  }
+  @media (max-width: 980px){
+    .layout{grid-template-columns:1fr}
+  }
+  .panel{
+    background:rgba(19,26,49,.92);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:1rem;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  .controls{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    gap:.8rem;
+    align-items:start;
+    margin-bottom:.8rem;
+  }
+  @media (max-width:700px){
+    .controls{grid-template-columns:1fr}
+  }
+  .cluster-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap:.65rem;
+  }
+  .cluster-btn{
+    width:100%;
+    padding:.8rem .7rem;
+    border-radius:14px;
+    border:2px solid transparent;
+    background:var(--panel2);
+    color:var(--text);
+    text-align:left;
+    cursor:pointer;
+    transition:.15s;
+    min-height:88px;
+  }
+  .cluster-btn:hover,.cluster-btn:focus{
+    transform:translateY(-1px);
+    border-color:var(--accent);
+    outline:none;
+  }
+  .cluster-btn.active{
+    border-color:var(--accent2);
+    box-shadow:0 0 0 2px rgba(251,191,36,.15) inset;
+  }
+  .cluster-name{
+    font-size:clamp(1rem,1.8vw,1.18rem);
+    font-weight:700;
+    margin-bottom:.2rem;
+  }
+  .cluster-meta{
+    color:var(--sub);
+    font-size:clamp(.88rem,1.4vw,1rem);
+    line-height:1.35;
+  }
+  .reset-btn{
+    border:none;
+    border-radius:14px;
+    background:#ef4444;
+    color:white;
+    font-weight:700;
+    font-size:clamp(1rem,1.6vw,1.1rem);
+    padding:.85rem 1rem;
+    cursor:pointer;
+    min-width:130px;
+    min-height:56px;
+  }
+  .reset-btn:hover{filter:brightness(1.08)}
+  .canvas-wrap{
+    width:100%;
+    background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+    border-radius:16px;
+    padding:.5rem;
+  }
+  canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    border-radius:14px;
+    background:#0a1021;
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.8rem 1rem;
+    margin-top:.6rem;
+    font-size:clamp(.95rem,1.4vw,1.05rem);
+    color:var(--sub);
+  }
+  .lg{
+    display:flex; align-items:center; gap:.45rem;
+  }
+  .dot{
+    width:14px;height:14px;border-radius:50%;
+    display:inline-block;
+  }
+  .right h2, .left h2{
+    margin:.1rem 0 .7rem 0;
+    font-size:clamp(1.25rem,2.1vw,1.6rem);
+  }
+  .info-card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:14px;
+    padding:.9rem;
+    margin-bottom:.75rem;
+  }
+  .big{
+    font-size:clamp(1.15rem,1.9vw,1.35rem);
+    font-weight:700;
+  }
+  .small{
+    color:var(--sub);
+    font-size:clamp(.95rem,1.4vw,1.05rem);
+    line-height:1.55;
+  }
+  .result{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:.7rem;
+  }
+  @media (max-width:650px){
+    .result{grid-template-columns:1fr}
+  }
+  .badge{
+    display:inline-block;
+    padding:.28rem .55rem;
+    border-radius:999px;
+    font-weight:700;
+    font-size:clamp(.9rem,1.4vw,1rem);
+    margin-left:.35rem;
+  }
+  .open{background:rgba(134,239,172,.18); color:#b7f7c7; border:1px solid rgba(134,239,172,.35);}
+  .glob{background:rgba(251,191,36,.15); color:#ffd978; border:1px solid rgba(251,191,36,.35);}
+  .question{
+    border-left:4px solid var(--accent);
+    padding-left:.8rem;
+    margin:.5rem 0 0;
+    color:#dce9ff;
+    font-size:clamp(1rem,1.5vw,1.12rem);
+    line-height:1.6;
+  }
+  .obs{
+    margin:.3rem 0 0 1.1rem;
+    padding:0;
+  }
+  .obs li{
+    margin:.28rem 0;
+    line-height:1.5;
+    color:#eef4ff;
+    font-size:clamp(.98rem,1.45vw,1.07rem);
+  }
+  .note{
+    color:var(--sub);
+    font-size:clamp(.9rem,1.2vw,1rem);
+    line-height:1.5;
+  }
+  .pill{
+    display:inline-block;
+    padding:.18rem .5rem;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:999px;
+    margin-right:.35rem;
+    margin-bottom:.35rem;
+    color:#dce9ff;
+    background:rgba(255,255,255,.03);
+    font-size:clamp(.9rem,1.2vw,1rem);
+  }
+</style>
 </head>
-
 <body>
 <div class="wrap">
+  <h1>성단의 HR도 탐구</h1>
+  <div class="subtitle">성단을 선택하면 별들의 표면온도(K)와 광도(태양광도 L☉)가 HR도에 즉시 표시됩니다. HR도의 모양과 전향점을 보고 산개성단과 구상성단을 구분하고, 성단의 나이를 유추해 보세요.</div>
 
-  <!-- ========================================================= -->
-  <!-- (A) 사이트 머리말 — 이 세 줄만 바꾸세요                     -->
-  <!-- ========================================================= -->
-  <header class="site">
-    <div class="kicker">탐구 아카이브 · ARCHIVE OF INQUIRY</div>
-    <h1>생각이 멈추지 않고 이어지는 곳</h1>
-    <p class="tagline">제출하고 끝나는 결과물이 아니라, 이어지고 자라는 사고의 흔적을 모읍니다.</p>
-    <div class="byline">
-      <span>운영 <b>탐구지기</b></span>
-      <span>분야 <b>영재교육 · 개방형 탐구</b></span>
-      <span>호스팅 <b>GitHub Pages</b></span>
+  <div class="layout">
+    <div class="left panel">
+      <div class="controls">
+        <div>
+          <h2>성단 선택</h2>
+          <div class="cluster-grid" id="clusterGrid"></div>
+        </div>
+        <div style="display:flex; align-items:flex-start; justify-content:flex-end;">
+          <button class="reset-btn" id="resetBtn">다시 시작</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="hrCanvas" width="920" height="660" aria-label="HR도 그래프"></canvas>
+      </div>
+
+      <div class="legend">
+        <div class="lg"><span class="dot" style="background:var(--ms)"></span>주계열성</div>
+        <div class="lg"><span class="dot" style="background:var(--rg)"></span>적색거성/거성가지</div>
+        <div class="lg"><span class="dot" style="background:var(--hb)"></span>수평가지</div>
+        <div class="lg">가로축: 표면온도 (K, 왼쪽이 더 뜨거움)</div>
+        <div class="lg">세로축: 광도 (L☉, 로그 눈금)</div>
+      </div>
     </div>
-  </header>
 
-  <div class="note">
-    이곳은 완성된 작품을 전시하는 갤러리가 아니라, <b>학생의 탐구 질문과 사고 과정이 보이도록</b> 모아 둔
-    아카이브입니다. 각 카드는 ‘무엇을 궁금해했는지 → 어떻게 헤맸는지 → 어디에 닿았고 무엇이 열려 있는지’를 담습니다.
-    작동하는 산출물은 카드의 링크로 연결됩니다.
+    <div class="right panel">
+      <h2>관찰과 개념 확인</h2>
+
+      <div class="info-card">
+        <div class="big" id="selectedName">성단을 선택해 보세요.</div>
+        <div class="small" id="selectedDesc">서로 다른 성단은 HR도에서 서로 다른 모양을 보입니다.</div>
+      </div>
+
+      <div class="result">
+        <div class="info-card">
+          <div class="big">분류 추론</div>
+          <div class="small" id="typeGuess">아직 선택되지 않았습니다.</div>
+        </div>
+        <div class="info-card">
+          <div class="big">전향점으로 본 나이</div>
+          <div class="small" id="ageGuess">아직 선택되지 않았습니다.</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="big">관찰 포인트</div>
+        <ul class="obs" id="observationList">
+          <li>성단을 선택하면 HR도의 모양이 바뀝니다.</li>
+          <li>주계열이 어디에서 꺾이는지(전향점)를 살펴보세요.</li>
+          <li>거성가지가 두드러지면 오래된 성단일 가능성이 큽니다.</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <div class="big">생각해 볼 질문</div>
+        <div class="question" id="questionBox">
+          어떤 성단이 더 젊을까요? 더 뜨겁고 밝은 별이 아직 주계열에 많이 남아 있는 성단을 찾아보세요.
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="big">선택 가능한 사례</div>
+        <div class="small">
+          <span class="pill">플레이아데스</span>
+          <span class="pill">히아데스</span>
+          <span class="pill">M67</span>
+          <span class="pill">M13</span>
+          <span class="pill">M3</span>
+          <span class="pill">오메가 센타우리</span>
+        </div>
+        <div class="note" style="margin-top:.4rem;">
+          실제 성단의 전형적인 특징을 반영한 수업용 모의 자료입니다. 성단의 종류와 나이에 따라 전향점 위치와 거성 분포가 달라집니다.
+        </div>
+      </div>
+    </div>
   </div>
-
-  <!-- ========================================================= -->
-  <!-- (B) 카드 목록 — 카드 안의 글자만 바꾸면 됩니다              -->
-  <!-- ========================================================= -->
-  <main class="grid">
-
-    <!-- ───── 카드: 자유낙하 ───── -->
-    <article class="card">
-      <div class="no">No. 001</div>
-      <h2>자유낙하 — 시간에 따른 속력 변화</h2>
-
-      <div class="field">
-        <span class="label q">탐구 질문</span>
-        <p>자유낙하에서 속력은 시간에 따라 어떻게 변할까?</p>
-      </div>
-      <div class="field">
-        <span class="label t">사고 흔적 · 시행착오</span>
-        <p>처음엔 '점점 빨라지다 일정해질 것'이라 예상했지만, 시간-속력 그래프가 계속 직선으로 그려지는 걸 보고 ‘속력이 일정하게 증가(등가속도)’함을 확인. 중력을 달·화성으로 바꾸니 기울기만 달라졌다.</p>
-      </div>
-      <div class="field">
-        <span class="label">열린 결론</span>
-        <p>그래프의 기울기가 곧 중력가속도. 그렇다면 공기 저항이 있으면 그래프는 어떻게 휘어질까? 다음 탐구로.</p>
-      </div>
-
-      <div class="meta">
-        <span class="updated">갱신 2026-06-19</span>
-        <!-- [실습] 이 카드는 자유낙하 산출물(freefall.html)로 연결합니다. 아래 href="" 안에 파일명을 적으세요. -->
-        <a class="go" href="" target="_blank" rel="noopener">산출물 열기 →</a>
-      </div>
-    </article>
-
-    <!-- ───── 카드: 포화수증기량 ───── -->
-    <article class="card">
-      <div class="no">No. 002</div>
-      <h2>공기 덩어리 상승과 구름 생성</h2>
-
-      <div class="field">
-        <span class="label q">탐구 질문</span>
-        <p>공기 덩어리가 상승하면 왜 구름이 생길까?</p>
-      </div>
-      <div class="field">
-        <span class="label t">사고 흔적 · 시행착오</span>
-        <p>‘높이 올라가면 수증기가 많아져서’라고 생각했다가, 그래프에서 상승할수록 기온이 내려가며 포화수증기량 곡선이 낮아지는 걸 발견. 실제 수증기량이 포화량을 넘는 이슬점에서 응결이 시작됨을 확인.</p>
-      </div>
-      <div class="field">
-        <span class="label">열린 결론</span>
-        <p>구름은 ‘수증기가 늘어서’가 아니라 ‘포화량이 줄어서’ 생긴다. 그렇다면 같은 공기라도 지표 습도가 다르면 구름 높이도 달라질까?</p>
-      </div>
-
-      <div class="meta">
-        <span class="updated">갱신 2026-06-19</span>
-        <!-- [실습] 이 카드는 공기 덩어리 상승(포화수증기량) 산출물(saturation.html)로 연결합니다. 아래 href="" 안에 파일명을 적으세요. -->
-        <a class="go" href="" target="_blank" rel="noopener">산출물 열기 →</a>
-      </div>
-    </article>
-
-    <!-- ───── 카드: 혈당 항상성 ───── -->
-    <article class="card">
-      <div class="no">No. 003</div>
-      <h2>혈당 항상성 — 먹고 움직여도 일정한 이유</h2>
-
-      <div class="field">
-        <span class="label q">탐구 질문</span>
-        <p>밥을 먹거나 운동을 해도 혈당이 일정하게 유지되는 건 어떻게 가능할까?</p>
-      </div>
-      <div class="field">
-        <span class="label t">사고 흔적 · 시행착오</span>
-        <p>‘몸이 알아서 조절한다’고만 막연히 생각했는데, 정상 범위를 벗어날 때마다 인슐린·글루카곤이 서로 반대로 작용해 되돌리는 ‘음성 되먹임’ 구조임을 그래프로 확인.</p>
-      </div>
-      <div class="field">
-        <span class="label">열린 결론</span>
-        <p>이 균형이 깨지면 어떻게 될까? 당뇨는 이 회로의 어느 부분이 고장난 것일까? 다음 탐구로.</p>
-      </div>
-
-      <div class="meta">
-        <span class="updated">갱신 2026-06-19</span>
-        <!-- [실습] 이 카드는 혈당 항상성 산출물(glucose.html)로 연결합니다. 아래 href="" 안에 파일명을 적으세요. -->
-        <a class="go" href="" target="_blank" rel="noopener">산출물 열기 →</a>
-      </div>
-    </article>
-
-    <!-- ========================================================= -->
-    <!-- (C) 복사용 빈 카드 — 카드를 늘리려면 아래 <article>~</article> 를  -->
-    <!--     통째로 복사해서 이 자리 위/아래에 붙여넣고 글자만 바꾸세요.   -->
-    <!--     No. 번호도 004, 005… 로 올려 주세요.                        -->
-    <!--     아직 산출물 파일이 없으면 href="#" 로 두면 됩니다.            -->
-    <!-- ========================================================= -->
-    <article class="card">
-      <div class="no">No. 004</div>
-      <h2>여기에 산출물 제목</h2>
-
-      <div class="field">
-        <span class="label q">탐구 질문</span>
-        <p>학생이 붙들었던 질문을 한 문장으로.</p>
-      </div>
-      <div class="field">
-        <span class="label t">사고 흔적 · 시행착오</span>
-        <p>어떻게 접근했고, 어디서 막혔고, 무엇을 바꿔 다시 시도했는지. (영재 카드의 핵심)</p>
-      </div>
-      <div class="field">
-        <span class="label">열린 결론</span>
-        <p>답이 아니라, 닿은 지점과 남은 질문.</p>
-      </div>
-
-      <div class="meta">
-        <span class="updated">갱신 2026-00-00</span>
-        <a class="go" href="#" target="_blank" rel="noopener">산출물 열기 →</a>
-      </div>
-    </article>
-
-  </main>
-
-  <!-- ===================== 꼬리말 ===================== -->
-  <footer class="site">
-    <span>학생 식별 정보를 담지 않습니다 · 닉네임만 사용</span>
-    <span>BUILT WITH GITHUB PAGES</span>
-  </footer>
-
 </div>
-</body>
-</html>
+
+<script>
+const clusters = [
+  {
+    id:"pleiades",
+    name:"플레이아데스",
+    short:"젊은 성단",
+    type:"산개성단",
+    age:0.12,
+    turnoffT:14500,
+    giantLevel:0.08,
+    hbLevel:0,
+    richness:90,
+    description:"푸른 뜨거운 별이 아직 많이 남아 있는 매우 젊은 산개성단."
+  },
+  {
+    id:"hyades",
+    name:"히아데스",
+    short:"중간 정도 나이",
+    type:"산개성단",
+    age:0.7,
+    turnoffT:8200,
+    giantLevel:0.16,
+    hbLevel:0,
+    richness:95,
+    description:"전향점이 플레이아데스보다 더 차가운 쪽으로 이동한 산개성단."
+  },
+  {
+    id:"m67",
+    name:"M67",
+    short:"늙은 산개성단",
+    type:"산개성단",
+    age:4.0,
+    turnoffT:6200,
+    giantLevel:0.28,
+    hbLevel:0.03,
+    richness:105,
+    description:"산개성단이지만 비교적 오래되어 전향점이 태양 부근 온도까지 내려온 사례."
+  },
+  {
+    id:"m13",
+    name:"M13",
+    short:"대표적인 구상성단",
+    type:"구상성단",
+    age:11.7,
+    turnoffT:5900,
+    giantLevel:0.42,
+    hbLevel:0.18,
+    richness:150,
+    description:"뜨거운 주계열성이 거의 없고 거성가지가 뚜렷한 오래된 구상성단."
+  },
+  {
+    id:"m3",
+    name:"M3",
+    short:"수평가지가 뚜렷함",
+    type:"구상성단",
+    age:11.4,
+    turnoffT:6100,
+    giantLevel:0.40,
+    hbLevel:0.24,
+    richness:145,
+    description:"거성가지와 함께 수평가지가 비교적 잘 나타나는 오래된 구상성단."
+  },
+  {
+    id:"omega",
+    name:"오메가 센타우리",
+    short:"매우 풍부한 구상성단",
+    type:"구상성단",
+    age:12.0,
+    turnoffT:5700,
+    giantLevel:0.48,
+    hbLevel:0.22,
+    richness:170,
+    description:"오래된 별들이 많아 주계열 전향점이 차가운 쪽에 있고 거성 분포가 풍부한 구상성단."
+  }
+];
+
+const canvas = document.getElementById("hrCanvas");
+const ctx = canvas.getContext("2d");
+const grid = document.getElementById("clusterGrid");
+const resetBtn = document.getElementById("resetBtn");
+
+const selectedName = document.getElementById("selectedName");
+const selectedDesc = document.getElementById("selectedDesc");
+const typeGuess = document.getElementById("typeGuess");
+const ageGuess = document.getElementById("ageGuess");
+const observationList = document.getElementById("observationList");
+const questionBox = document.getElementById("questionBox");
+
+let currentCluster = null;
+let starData = [];
+
+function mulberry32(a){
+  return function() {
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
+function hashString(str){
+  let h = 1779033703 ^ str.length;
+  for(let i=0;i<str.length;i++){
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return (h ^= h >>> 16) >>> 0;
+  }
+}
+function seededRandom(id){
+  return mulberry32(hashString(id)());
+}
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+function log10(x){ return Math.log(x)/Math.LN10; }
+
+function generateClusterStars(cluster){
+  const rand = seededRandom(cluster.id);
+  const stars = [];
+
+  const msCount = Math.round(cluster.richness * (cluster.type === "구상성단" ? 0.7 : 0.86));
+  const giantCount = Math.round(cluster.richness * cluster.giantLevel);
+  const hbCount = Math.round(cluster.richness * cluster.hbLevel);
+
+  for(let i=0;i<msCount;i++){
+    const u = Math.pow(rand(), 1.8); // 차가운 저질량별이 더 많게
+    const T = 3200 + (cluster.turnoffT - 3200) * u;
+    let L = Math.pow(T / 5800, 7.1);
+    L *= (0.82 + rand()*0.38);
+    // 전향점 근처에서 약간 퍼짐
+    if (T > cluster.turnoffT * 0.9) L *= (0.92 + rand()*0.4);
+    stars.push({T, L: clamp(L, 0.001, 3e4), stage:"주계열성"});
+  }
+
+  for(let i=0;i<giantCount;i++){
+    const v = rand();
+    const T = cluster.type === "구상성단"
+      ? 4000 + rand()*1200
+      : 4300 + rand()*1600;
+    const base = cluster.type === "구상성단" ? 60 : 20;
+    const top = cluster.type === "구상성단" ? 2600 : 700;
+    const L = base * Math.pow(top/base, v) * (0.88 + rand()*0.28);
+    stars.push({T, L: clamp(L, 2, 1e4), stage:"적색거성"});
+  }
+
+  for(let i=0;i<hbCount;i++){
+    const T = 5000 + rand()*4500;
+    const L = 35 * (0.8 + rand()*0.8);
+    stars.push({T, L, stage:"수평가지"});
+  }
+
+  // 전향점 근처에 관측상 중요한 점 몇 개 추가
+  for(let i=0;i<10;i++){
+    const T = cluster.turnoffT * (0.92 + rand()*0.12);
+    const L = Math.pow(T / 5800, 7.1) * (0.95 + rand()*0.35);
+    stars.push({T, L: clamp(L, 0.01, 2e4), stage:"주계열성"});
+  }
+
+  return stars;
+}
+
+function createButtons(){
+  grid.innerHTML = "";
+  clusters.forEach(cluster=>{
+    const btn = document.createElement("button");
+    btn.className = "cluster-btn";
+    btn.innerHTML = `
+      <div class="cluster-name">${cluster.name}</div>
+      <div class="cluster-meta">${cluster.short}<br>${cluster.description}</div>
+    `;
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".cluster-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      selectCluster(cluster);
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function tempToX(T, plot){
+  const Tmin = 3000, Tmax = 30000;
+  const x = plot.x + (Tmax - T) / (Tmax - Tmin) * plot.w; // 역축
+  return x;
+}
+function lumToY(L, plot){
+  const minLog = -3, maxLog = 4;
+  const y = plot.y + (maxLog - log10(L)) / (maxLog - minLog) * plot.h;
+  return y;
+}
+
+function drawBase(selected){
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  // 배경
+  const bg = ctx.createLinearGradient(0,0,0,h);
+  bg.addColorStop(0,"#081120");
+  bg.addColorStop(1,"#0c1430");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,w,h);
+
+  // 별 배경
+  const rand = seededRandom("background-stars");
+  for(let i=0;i<80;i++){
+    ctx.fillStyle = `rgba(255,255,255,${0.12 + rand()*0.45})`;
+    const r = rand()*1.6 + 0.3;
+    ctx.beginPath();
+    ctx.arc(rand()*w, rand()*h, r, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  const plot = {x:90, y:40, w:w-140, h:h-120};
+
+  // 그라데이션 띠
+  const grad = ctx.createLinearGradient(plot.x,0,plot.x+plot.w,0);
+  grad.addColorStop(0,"rgba(120,180,255,0.09)");
+  grad.addColorStop(0.25,"rgba(180,220,255,0.05)");
+  grad.addColorStop(0.5,"rgba(255,255,255,0.03)");
+  grad.addColorStop(0.75,"rgba(255,210,160,0.05)");
+  grad.addColorStop(1,"rgba(255,150,120,0.09)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(plot.x, plot.y, plot.w, plot.h);
+
+  // 격자와 축
+  ctx.strokeStyle = "rgba(255,255,255,0.16)";
+  ctx.lineWidth = 1;
+
+  const tempTicks = [30000,20000,10000,7500,6000,4500,3000];
+  const lumTicks = [1e-3,1e-2,1e-1,1,10,100,1000,10000];
+
+  tempTicks.forEach(t=>{
+    const x = tempToX(t, plot);
+    ctx.strokeStyle = t===6000 ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.10)";
+    ctx.beginPath();
+    ctx.moveTo(x, plot.y);
+    ctx.lineTo(x, plot.y + plot.h);
+    ctx.stroke();
+  });
+
+  lumTicks.forEach(l=>{
+    const y = lumToY(l, plot);
+    ctx.strokeStyle = l===1 ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.10)";
+    ctx.beginPath();
+    ctx.moveTo(plot.x, y);
+    ctx.lineTo(plot.x + plot.w, y);
+    ctx.stroke();
+  });
+
+  ctx.strokeStyle = "rgba(255,255,255,0.55)";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(plot.x, plot.y, plot.w, plot.h);
+
+  ctx.fillStyle = "#eaf2ff";
+  ctx.font = "700 22px Arial";
+  ctx.fillText("HR도", plot.x, 28);
+
+  ctx.font = "600 18px Arial";
+  ctx.fillStyle = "#d7e4ff";
+  ctx.textAlign = "center";
+  tempTicks.forEach(t=>{
+    const x = tempToX(t, plot);
+    ctx.fillText(String(t), x, plot.y + plot.h + 30);
+  });
+  ctx.fillText("표면온도 (K)  ← 뜨거움 | 차가움 →", plot.x + plot.w/2, h - 18);
+
+  ctx.save();
+  ctx.translate(24, plot.y + plot.h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("광도 (L☉, 로그 눈금)", 0, 0);
+  ctx.restore();
+
+  ctx.textAlign = "right";
+  lumTicks.forEach(l=>{
+    const y = lumToY(l, plot);
+    ctx.fillText(l >= 1 ? l.toLocaleString("ko-KR") : l.toFixed(Math.abs(log10(l))), plot.x - 10, y + 6);
+  });
+
+  // 태양 위치 참고선
+  const sunX = tempToX(5800, plot);
+  const sunY = lumToY(1, plot);
+  ctx.strokeStyle = "rgba(255,235,120,0.55)";
+  ctx.setLineDash([6,5]);
+  ctx.beginPath();
+  ctx.moveTo(sunX, plot.y);
+  ctx.lineTo(sunX, plot.y + plot.h);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(plot.x, sunY);
+  ctx.lineTo(plot.x + plot.w, sunY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = "rgba(255,235,120,0.9)";
+  ctx.font = "600 16px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("태양 참고선", sunX + 8, sunY - 8);
+
+  // 빈 화면 안내
+  if(!selected){
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.font = "700 28px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("위에서 성단을 선택하세요", plot.x + plot.w/2, plot.y + plot.h/2 - 12);
+    ctx.font = "500 19px Arial";
+    ctx.fillStyle = "rgba(220,235,255,0.82)";
+    ctx.fillText("성단마다 전향점과 거성 분포가 다르게 나타납니다.", plot.x + plot.w/2, plot.y + plot.h/2 + 24);
+  }
+
+  return plot;
+}
+
+function drawStars(stars, plot){
+  const colors = {
+    "주계열성":"#8ec5ff",
+    "적색거성":"#ffb36b",
+    "수평가지":"#d8a8ff"
+  };
+
+  stars.forEach(s=>{
+    const x = tempToX(s.T, plot);
+    const y = lumToY(s.L, plot);
+    let r = s.stage === "주계열성" ? 3.3 : (s.stage === "적색거성" ? 4.4 : 4.0);
+
+    const glow = ctx.createRadialGradient(x,y,0,x,y,r*3.6);
+    const c = colors[s.stage];
+    glow.addColorStop(0, hexToRgba(c, .95));
+    glow.addColorStop(0.4, hexToRgba(c, .35));
+    glow.addColorStop(1, hexToRgba(c, 0));
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(x,y,r*3.6,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = c;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+
+function hexToRgba(hex, a){
+  const h = hex.replace("#","");
+  const bigint = parseInt(h,16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function summarize(cluster, stars){
+  const turnoff = cluster.turnoffT;
+  const hotMS = stars.filter(s=>s.stage==="주계열성" && s.T > 9000).length;
+  const giants = stars.filter(s=>s.stage==="적색거성").length;
+  const hb = stars.filter(s=>s.stage==="수평가지").length;
+
+  let typeText = "";
+  if(cluster.type === "산개성단"){
+    typeText = `주계열에 상대적으로 젊은 별이 남아 있고 별 수가 비교적
